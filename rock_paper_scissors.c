@@ -34,7 +34,7 @@
     [] - Countdown timer
     [] - Profile streaks
 
-    [] - Make the Bot Speak and Interact witht eh Player
+    [] - Make the Bot Speak and Interact with the player
     [] - Sound Effects
     [] - Play background music
 
@@ -45,7 +45,8 @@
 
     [] - Package it
 
-
+    // bugs
+    [] - When exiting game, it prints everything on its path.
  */
 
 void game_logic(char c, int *score)
@@ -78,7 +79,32 @@ void game_logic(char c, int *score)
     }
 }
 
-void game_mode_choices(void){
+int rock_paper_scissors(char choice, int *score, int *exit)
+{
+    printf("\n\nCurrent score: %d", *score);
+    printf("\nEnter Choice: ");
+    scanf(" %c", &choice);
+
+    if (tolower(choice) == 'r' || tolower(choice) == 's' || tolower(choice) == 'p' || tolower(choice) == 'e')
+    {
+        if (choice == 'E' || choice == 'e')
+        {
+            printf("Exiting Program...");
+            *exit = 0;
+        }
+        else
+        {
+            game_logic(choice, score);
+        }
+    }
+    else
+    {
+        printf("Input Must Follow the Instructions of the Game... Try again !");
+    }
+}
+
+void game_mode_choices(void)
+{
     printf("\n");
     printf("PICK YOUR GAME MODE: \n");
     printf("1: Best of 7\n");
@@ -102,8 +128,9 @@ void input_instructions(void)
 int main(void)
 {
     char choice;
+    int exit = 1;
     int score = 0;
-
+    int rounds;
     int mode;
     /*
     Mode Of Play:
@@ -115,31 +142,55 @@ int main(void)
     printf("\n>============= Rock Paper Scissors =============<\n\n\n");
     game_mode_choices();
 
-    while(1){
-        
-    }
-
-    while (1)
+    while (exit)
     {
-        printf("\n\nCurrent score: %d", score);
-        printf("\nEnter Choice: ");
-        scanf(" %c", &choice);
+        printf("\nPick Mode: ");
+        scanf(" %d", &mode);
 
-        if (tolower(choice) == 'r' || tolower(choice) == 's' || tolower(choice) == 'p' || tolower(choice) == 'e')
+        switch (mode)
         {
-            if (choice == 'E' || choice == 'e')
+        case 0:
+            printf("Exiting Game...");
+            exit = 0;
+        case 1: // Best of 7;
+            rounds = 7;
+            printf("\n\nWelcome to Best of 7, Score 4 or higher to Win...");
+            printf("\n+1 Point if you Win");
+            printf("\n-1 Point if you Lose");
+            printf("\nNo Points if you Draw");
+
+            while (rounds > 0 && exit)
             {
-                printf("Exiting Program...");
-                return 0;
+                input_instructions();
+                rock_paper_scissors(choice, &score, &exit);
+                rounds--;
+            }
+
+            if (score >= 4)
+            {
+                printf("\nYou Win with a Score of %d!\n", score);
             }
             else
             {
-                game_logic(choice, &score);
+                printf("\nYou Lose! You only scored %d\n", score);
             }
-        }
-        else
-        {
-            printf("Input Must Follow the Instructions of the Game... Try again !");
+            score = 0;
+            break;
+
+        case 2: // endless mode
+            printf("\n\n Welcome to Endless Mode... Play Until You Are Tired;");
+            input_instructions();
+            rock_paper_scissors(choice, &score, &exit);
+            break;
+
+        case 3:
+            printf("Coming Soon...");
+            break;
+
+        default:
+            printf("\nWrong input Dumbass... Pick from these...");
+            game_mode_choices();
+            break;
         }
     }
 }
