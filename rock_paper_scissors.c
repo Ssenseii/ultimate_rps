@@ -18,8 +18,8 @@
     [X] - ASCII Art or EMOJIS (didn't like them);
     [X] - Colors in terminal
 
-    [] - Retry Option
-    [] - Multiplayer Mode
+    [X] - Retry Option
+    [] - Multiplayer Mode                                           /// I still haven't learned network programming in c
     [] - Leaderboards Feature
     [] - Timed Inputs
     [] - AI Bot
@@ -66,6 +66,62 @@ void setColor(int color)
 14 = Yellow
 15 = Bright White
  */
+
+/*
+    Players Zone
+*/
+
+/// Logging Players In
+
+// save player info in a file.
+// prompt("Player: ");
+// get input
+// see if it exists in the file
+// if yes: use his score
+// if not: create new player
+// update score everytime
+
+typedef struct
+{
+    char *name;
+    int score;
+} Player;
+
+void print_leaderboard(char *filename)
+{
+
+    FILE *fp;
+    char player[1024];
+    int linecount = 0;
+
+    fp = fopen(filename, "r");
+
+    while (fgets(player, sizeof player, fp) != NULL)
+    {
+        printf("%d: %s", ++linecount, player);
+    }
+
+    fclose(fp);
+}
+
+void save_player_info(char *filename, Player player)
+{
+    FILE *fp;
+
+    fp = fopen(filename, "w");
+    
+    fprintf(fp, "%s - %d", player.name, player.score);
+
+    fclose(fp);
+}
+
+/*
+    End of Players Zone
+*/
+
+/*
+    Game Logic Zone
+*/
 
 char *symbol(char c)
 {
@@ -139,16 +195,26 @@ int rock_paper_scissors(char choice, int *score, int *exit)
     }
 }
 
+/*
+    End of Game Logic Zone
+*/
+
+/*
+    Instruction Zone
+*/
+
 void game_mode_choices(void)
 {
     printf("\n");
     printf("PICK YOUR GAME MODE: \n");
     printf("1: Best of 7\n");
     printf("2: Endless Mode\n");
-    printf("3: Coming Soon...\n");
+    printf("3: Multiplayer Mode\n");
+    printf("4: Coming Soon...\n");
     printf("0: Exit \n");
     printf("\n");
     printf("11: Access User Score");
+    printf("11: Leaderboards");
     printf("\n");
 }
 
@@ -163,8 +229,20 @@ void input_instructions(void)
     printf("\n");
 }
 
+/*
+    End of Instruction Zone
+*/
+
 int main(void)
 {
+
+    Player rps_player = {
+        .name = "JUH",
+        .score = 12,
+    };
+    save_player_info("players.txt", rps_player);
+    print_leaderboard("players.txt");
+
     char choice;
     int exit = 1;
     int ultimate_score = 0;
@@ -187,6 +265,7 @@ int main(void)
         case 0:
             printf("Exiting Game...");
             exit = 0;
+
         case 1: // Best of 7;
             rounds = 7;
             printf("\n\nWelcome to Best of 7, Score 4 or higher to Win...\n");
@@ -204,6 +283,7 @@ int main(void)
             if (score >= 4)
             {
                 setColor(2);
+                printf("\n -- Best of 7 --");
                 printf("\nYou Win with a Score of %d!\n", score);
                 setColor(7);
                 ultimate_score += 1;
@@ -211,6 +291,7 @@ int main(void)
             else
             {
                 setColor(4);
+                printf("\n -- Best of 7 --");
                 printf("\nYou Lose! You only scored %d\n", score);
                 setColor(7);
             }
@@ -221,19 +302,34 @@ int main(void)
         case 2: // endless mode
             printf("\n\n Welcome to Endless Mode... Play Until You Are Tired;");
             input_instructions();
-            rock_paper_scissors(choice, &score, &exit);
+            while (exit)
+            {
+                rock_paper_scissors(choice, &score, &exit);
+            }
             game_mode_choices();
             break;
 
         case 3:
-            printf("Coming Soon...");
+            printf("\n\n Welcome to Multiplayer Mode... Play against your friend");
+            setColor(10);
+            printf("\nPlayer Number 1: (◣_◢)");
+            setColor(12);
+            printf("\nPlayer Number 2: (◕_◕)");
+            setColor(7);
+            printf("\n\nComing Soon After I learn C's Networking Programming");
+            break;
+
+        case 4:
+            printf("\nComing Soon...");
+            game_mode_choices();
             break;
 
         case 11:
             printf("\nThe User has a total score of %d", ultimate_score);
+            break;
 
         default:
-            printf("\nWrong input Dumbass... Pick from these...");
+            printf("\nWrong input Dumbass, Pick from these...");
             game_mode_choices();
             break;
         }
